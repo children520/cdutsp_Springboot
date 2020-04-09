@@ -1,4 +1,4 @@
-package com.xiaojun.cdutspspringboot.Enity;
+package com.xiaojun.cdutspspringboot.enity;
 
 import javax.persistence.*;
 
@@ -17,7 +17,7 @@ public class User {
     @Column(nullable = false,length = 10)
     private String userName;
 
-    @Column(nullable = false,length = 20)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false,length = 5)
@@ -31,18 +31,15 @@ public class User {
     @Column(nullable = false,length = 20)
     private String phoneNumber;
 
-    @Transient
-    private String passwordConfirm;
 
 
     public User() {
     }
 
-    public User(String userName, String password, String passwordConfirm,
+    public User(String userName, String password,
                 Sex sex, String collage, String phoneNumber){
         this.userName=userName;
         this.password=password;
-        this.passwordConfirm=passwordConfirm;
         this.collage=collage;
         this.sex=sex;
         this.phoneNumber=phoneNumber;
@@ -55,13 +52,6 @@ public class User {
 //    public void setId(Integer id) {
 //        this.id = id;
 //    }
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
     public String getPhoneNumber() {
         return phoneNumber;
     }

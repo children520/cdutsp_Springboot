@@ -1,28 +1,31 @@
 package com.xiaojun.cdutspspringboot.controller;
 
-import com.xiaojun.cdutspspringboot.Enity.User;
+import com.xiaojun.cdutspspringboot.enity.User;
 
-import com.xiaojun.cdutspspringboot.exception.UserAlreadyExistException;
 import com.xiaojun.cdutspspringboot.repository.UserRepository;
-import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping(path = "/user")
 public class cdutSpUserController {
+    private Logger logger= LoggerFactory.getLogger(getClass());
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping(path = "/registration",produces ="application/json;charset=UTF-8")
     public @ResponseBody User addNewUser(@RequestBody User user){
+        System.out.println(user.getUserName()+user.getPhoneNumber());
         String message="";
+        String password=passwordEncoder.encode(user.getPassword());
         try {
             if(userRepository.existsByPhoneNumber(user.getPhoneNumber())){
                 message="手机号码已注册";
@@ -32,11 +35,15 @@ public class cdutSpUserController {
                 message="用户名已注册";
                 throw new DataIntegrityViolationException(message);
             }
+            user.setPassword(password);
             userRepository.save(user);
             return user;
-        }catch (DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,message,e);
-
+        }catch (Exception e){
+            System.out.println(e);
+            if(e instanceof DataIntegrityViolationException){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,message,e);
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"注册失败",e);
         }
     }
     @GetMapping(path = "/all")

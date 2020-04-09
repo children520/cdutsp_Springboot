@@ -1,8 +1,7 @@
 package com.xiaojun.cdutspspringboot.repository;
 
-import com.xiaojun.cdutspspringboot.Enity.User;
+import com.xiaojun.cdutspspringboot.enity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
