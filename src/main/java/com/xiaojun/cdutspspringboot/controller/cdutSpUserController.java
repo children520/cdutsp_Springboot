@@ -1,7 +1,9 @@
 package com.xiaojun.cdutspspringboot.controller;
 
+import com.xiaojun.cdutspspringboot.enity.CardMessage;
 import com.xiaojun.cdutspspringboot.enity.User;
 
+import com.xiaojun.cdutspspringboot.repository.CardMessageRepository;
 import com.xiaojun.cdutspspringboot.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,25 +23,31 @@ public class cdutSpUserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     @PostMapping(path = "/registration",produces ="application/json;charset=UTF-8")
     public @ResponseBody User addNewUser(@RequestBody User user){
-        System.out.println(user.getUserName()+user.getPhoneNumber());
         String message="";
-        String password=passwordEncoder.encode(user.getPassword());
+        String encodePassword=passwordEncoder.encode(user.getPassword());
+        System.out.println(user.getUserName());
         try {
-            if(userRepository.existsByPhoneNumber(user.getPhoneNumber())){
-                message="手机号码已注册";
+            if(userRepository.existsByEmail(user.getEmail())){
+                message="邮箱已被注册";
                 throw new DataIntegrityViolationException(message);
             }
             if(userRepository.existsByUserName(user.getUserName())){
-                message="用户名已注册";
+                message="用户名已被注册";
                 throw new DataIntegrityViolationException(message);
             }
-            user.setPassword(password);
+            if (userRepository.existsByPhoneNumber(user.getPhoneNumber())){
+                message="号码已被注册";
+                throw new DataIntegrityViolationException(message);
+            }
+
+            user.setPassword(encodePassword);
             userRepository.save(user);
             return user;
         }catch (Exception e){
-            System.out.println(e);
+            System.out.println(message);
             if(e instanceof DataIntegrityViolationException){
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND,message,e);
             }
@@ -77,5 +85,27 @@ public class cdutSpUserController {
     }
 
      */
+    @PostMapping(path = "/login")
+    public @ResponseBody User userLogin(@RequestBody User user){
+        String message="";
+        try {
+            if(!userRepository.existsByUserName(user.getUserName())){
+                message="用户不存在";
+                throw new Exception();
+            }
+            if(!passwordEncoder.matches(user.getPassword(),
+                    userRepository.findByUserName(user.getUserName()).getPassword()
+            )){
+                message="密码不正确";
+                throw new Exception();
+            }
+            return userRepository.findByUserName(user.getUserName());
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,message,e);
+        }
+
+    }
+
+
 }
 
