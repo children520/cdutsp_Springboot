@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CardMessageRepository extends JpaRepository<CardMessage,String> {
-
+    CardMessage findById(Integer id);
 }
