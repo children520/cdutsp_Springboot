@@ -1,4 +1,4 @@
-package com.xiaojun.cdutspspringboot.exception;
+package com.xiaojun.whut.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

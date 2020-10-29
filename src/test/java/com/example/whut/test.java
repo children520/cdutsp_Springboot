@@ -1,28 +1,27 @@
-package com.example.cdutspspringboot;
+package com.example.whut;
 
-import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
-import org.jasypt.encryption.StringEncryptor;
+import com.xiaojun.whut.Entity.Role;
+import com.xiaojun.whut.Repository.RoleRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.SimpleMailMessage;
 
 
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Properties;
-
-
+@EntityScan(basePackages = "com.xiaojun.whut.repository")
 @SpringBootTest(classes = test.class)
 @RunWith(SpringRunner.class)
 public class test {
 
     private JavaMailSenderImpl javaMailSender=new JavaMailSenderImpl();
-
+    @Autowired
+    private RoleRepository roleRepository;
     @Test
     public void  test(){
 
@@ -48,5 +47,13 @@ public class test {
         System.out.println("第一次加密" + encode1);
         System.out.println("第一次加密密文是否验证通过: " + encoder.matches(password, encode));
         System.out.println("第二次加密密文是否验证通过: " + encoder.matches(password, encode1));
+    }
+    @Test
+    public void save(){
+        String roleStr="ROLE_";
+        Role role=new Role();
+        role.setNameZH("系统管理员");
+        role.setName(roleStr+"admin");
+        roleRepository.save(role);
     }
 }
